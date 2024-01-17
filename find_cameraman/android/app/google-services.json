@@ -1,0 +1,126 @@
+{
+  "project_info": {
+    "project_number": "48013660954",
+    "project_id": "findcameraman",
+    "storage_bucket": "findcameraman.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48013660954:android:2f75e370908c8b7f4c12a3",
+        "android_client_info": {
+          "package_name": "com.example.camaraman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPeThxcn-e5H2NEKV1Us7H2gGMF2lYJl0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48013660954:android:033fe345af09fd934c12a3",
+        "android_client_info": {
+          "package_name": "com.example.find_camaraman_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPeThxcn-e5H2NEKV1Us7H2gGMF2lYJl0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48013660954:android:f603bb2793068da04c12a3",
+        "android_client_info": {
+          "package_name": "com.example.find_cameraman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPeThxcn-e5H2NEKV1Us7H2gGMF2lYJl0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48013660954:android:1dfdfbb9ac22f05d4c12a3",
+        "android_client_info": {
+          "package_name": "com.example.find_cameraman_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPeThxcn-e5H2NEKV1Us7H2gGMF2lYJl0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48013660954-1dp9o6lcsv4g9615006h0ci669jt6a9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
