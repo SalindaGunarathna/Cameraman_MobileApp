@@ -1,11 +1,21 @@
 class Project {
   String projectName;
-  List<String> album = ["null"];
+  List<String> album = [];
   String? description;
+  String? cameramanId;
+  String? cameramanName;
+  String? cameramanEmail;
+  String? projectDate;
 
   Project(
-    this.projectName,
-  );
+    this.projectName, {
+    this.cameramanId,
+    this.cameramanName,
+    this.cameramanEmail,
+    this.projectDate,
+    this.description
+    
+});
 
   void addImage(String image) {
     album.add(image);

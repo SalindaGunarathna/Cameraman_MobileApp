@@ -17,6 +17,7 @@ class User {
     this.phoneNumber,
     this.emailAddress,
     this.password,
+    this.profileURL
   );
 
   void addAddress(

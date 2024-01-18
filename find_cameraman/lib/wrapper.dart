@@ -1,5 +1,7 @@
 import 'package:find_cameraman/homepage.dart';
-import 'package:find_cameraman/login.dart';
+import 'package:find_cameraman/screens/auth/login.dart';
+import 'package:find_cameraman/screens/auth/clientBooking.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +22,7 @@ class _WrapperState extends State<Wrapper> {
         
         builder: ( context,  snapshot) {
           if(snapshot.hasData){
-            return HomePage();
+            return ClientBooking();
           }else{
             return Login();
           }

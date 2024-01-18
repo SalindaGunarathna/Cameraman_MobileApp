@@ -22,7 +22,8 @@ class Cameraman extends User {
     String emailAddress,
     String password,
     this.skill,
-  ) : super(name, userID, phoneNumber, emailAddress, password);
+    String profileURL
+  ) : super(name, userID, phoneNumber, emailAddress, password,profileURL);
 
   void addPost(String postContent) {
     _posts.add(postContent);
@@ -31,6 +32,18 @@ class Cameraman extends User {
 
   List<String> getPosts() {
     return List<String>.from(_posts);
+  }
+
+    Map<String, dynamic> toJSON() {
+    return {
+      'userID': userID,
+      'name': name,
+      'emailAddress': emailAddress,
+      'password': password,
+      'phoneNumber': phoneNumber,
+      'profileURL':profileURL
+         
+    };
   }
 
   void newAddress(

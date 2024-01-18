@@ -1,5 +1,8 @@
 import 'package:find_cameraman/firebase_options.dart';
-import 'package:find_cameraman/screen/welcomeScreen.dart';
+import 'package:find_cameraman/screens/auth/cman_profile.dart';
+
+import 'package:find_cameraman/screens/auth/welcome_page.dart';
+import 'package:find_cameraman/utils/colors.dart';
 import 'package:find_cameraman/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +20,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-       
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      title: 'Cman',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: WelcomeScreen(),
+       debugShowCheckedModeBanner: false,
+      home:  WelcomePage(),
     );
   }
 }
