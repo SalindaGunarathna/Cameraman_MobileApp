@@ -9,10 +9,16 @@ import 'portfolio.dart';
 
 class Cameraman extends User {
   String skill;
+  String _budgetRange = "null";
+
   Portfolio portfolio = Portfolio("C001", "Cameraman Portfolio", DateTime.now());
   List<String> _posts = [];
   List<Review> _reviews = [];
   bool avalible = false;
+
+  List<String> Followers = [];
+  List<String> Following = [];
+
 
 
   Cameraman(
@@ -45,6 +51,16 @@ class Cameraman extends User {
          
     };
   }
+
+   String getBudget() {
+    return this._budgetRange;
+  }
+    void setBudget(String budgetRange) {
+    this._budgetRange = budgetRange;
+  }
+  
+
+
 
   void newAddress(
     String street,

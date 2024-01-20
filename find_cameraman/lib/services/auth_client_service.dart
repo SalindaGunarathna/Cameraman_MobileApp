@@ -14,7 +14,7 @@ class AutClienthMethodes {
   Future<user_model.UserModel> getCurrentUser() async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snapshot =
-        await _firestore.collection('users').doc(currentUser.uid).get();
+        await _firestore.collection('clients').doc(currentUser.uid).get();
     return user_model.UserModel.fromJson(
         snapshot.data() as Map<String, dynamic>);
   }

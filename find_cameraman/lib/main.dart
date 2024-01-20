@@ -1,9 +1,9 @@
 import 'package:find_cameraman/firebase_options.dart';
-import 'package:find_cameraman/screens/auth/cman_profile.dart';
-
+import 'package:find_cameraman/screens/auth/clientProfile.dart';
+import 'package:find_cameraman/screens/auth/cmanNewProfile.dart';
+import 'package:find_cameraman/screens/auth/user_profile.dart';
 import 'package:find_cameraman/screens/auth/welcome_page.dart';
 import 'package:find_cameraman/utils/colors.dart';
-import 'package:find_cameraman/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: mobileBackgroundColor,
       ),
        debugShowCheckedModeBanner: false,
-      home:  WelcomePage(),
+      //home:  CmanNewProfile(uid: "9XyqYkGxXqbRoFkaxfADDKEqPr32",), //ClientProfilePage(uid: "6cbDnjHj2AOr8qPDluCA",),
+      home: WelcomePage(),
+      //WelcomePage() //  
+      
+      
+      //CmanNewProfile(uid: "9XyqYkGxXqbRoFkaxfADDKEqPr32",),
     );
   }
 }

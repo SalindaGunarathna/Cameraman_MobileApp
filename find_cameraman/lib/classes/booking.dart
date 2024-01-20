@@ -5,6 +5,7 @@ import "address.dart";
 
 class Booking {
   String bookingID;
+  String eventName;
   String eventDetails;
   String status;
   DateTime data;
@@ -20,6 +21,7 @@ class Booking {
     this.clientName,
     this.cameramanName,
     this.address,
+    this.eventName
   );
 }
 

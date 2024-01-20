@@ -1,7 +1,9 @@
 import 'package:find_cameraman/homepage.dart';
+import 'package:find_cameraman/screens/Home/homeScreen.dart';
 import 'package:find_cameraman/screens/auth/addProject.dart';
 import 'package:find_cameraman/screens/auth/clientBooking.dart';
 import 'package:find_cameraman/screens/auth/clientProfile.dart';
+import 'package:find_cameraman/screens/auth/cman_profile.dart';
 import 'package:find_cameraman/screens/auth/welcome_page.dart';
 import 'package:find_cameraman/widgets/button.dart';
 import 'package:find_cameraman/widgets/textfield.dart';
@@ -32,7 +34,7 @@ class _LoginState extends State<Login> {
       // Navigate to the booking page on successful login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomeScreen()),
       );
     } catch (e) {
       print("Error signing in: $e");

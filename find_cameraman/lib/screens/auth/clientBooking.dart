@@ -27,6 +27,7 @@ class _ClientHomepageState extends State<ClientBooking
   final TextEditingController stateController = TextEditingController();
   final TextEditingController postalCodeController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
+   final TextEditingController eventNameController = TextEditingController();
 
   @override
   void initState() {
@@ -56,9 +57,10 @@ class _ClientHomepageState extends State<ClientBooking
         'bookingID': booking.bookingID,
         'eventDetails': booking.eventDetails,
         'status': booking.status,
-        'data': booking.data,
+        'date': booking.data,
         'clientName': booking.clientName,
         'cameramanName': booking.cameramanName,
+        'eventName' : booking.eventName,
         'address': {
           'street': booking.address.street,
           'city': booking.address.city,
@@ -89,6 +91,9 @@ class _ClientHomepageState extends State<ClientBooking
         postalCodeController.text,
         countryController.text,
       ),
+      eventNameController.text
+
+      
     );
 
     // Call the method to add the booking

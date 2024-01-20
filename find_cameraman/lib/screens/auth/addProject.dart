@@ -18,6 +18,8 @@ class _AddProjectState extends State<AddProject> {
   final user = FirebaseAuth.instance.currentUser;
 
   Project? newProject;
+
+  int i =100;
   Uint8List? _image;
   String? Url;
 
@@ -40,17 +42,22 @@ class _AddProjectState extends State<AddProject> {
   }
 
   Future<void> _getUserName() async {
+
+
+    
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final QuerySnapshot querySnapshot = await firestore
         .collection("cameramans")
         .where("emailAddress", isEqualTo: user!.email)
         .get();
     final List<DocumentSnapshot> documents = querySnapshot.docs;
+
+
     if (documents.isNotEmpty) {
       final DocumentSnapshot document = documents.first;
       cameramanName.text = document["name"];
       cameramanEmail.text = document["emailAddress"];
-      cameramanId.text = document["userID"];
+      cameramanId.text = document.id;
     }
   }
 
@@ -92,20 +99,15 @@ class _AddProjectState extends State<AddProject> {
     });
   }
 
-  // void saveProfile() async {
-  //   if (_image != null) {
-  //     String? url2 = await StoreData().uploadImageToStorange("58", _image!);
 
-  //     print(url2);
-  //     Url = url2;
-  //   } else {
-  //     print("Error: Image is null");
-  //   }
-  // }
 
   Future<void> _addImage() async {
+
+    String imageName =  i.toString();
+
+    i = i+1;
     if (_image != null) {
-      String? url2 = await StoreData().uploadImageToStorange("58", _image!);
+      String? url2 = await StoreData().uploadImageToStorange(imageName, _image!);
 
       print(url2);
       Url = url2;
@@ -149,7 +151,7 @@ class _AddProjectState extends State<AddProject> {
                       : const CircleAvatar(
                           radius: 64,
                           backgroundImage: NetworkImage(
-                              "https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg"),
+                              "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?size=626&ext=jpg&ga=GA1.1.632798143.1705622400&semt=sph"),
                         ),
                   Positioned(
                     child: IconButton(

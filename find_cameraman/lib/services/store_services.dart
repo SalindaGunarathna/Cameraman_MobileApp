@@ -1,7 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class StorageMethodes {
@@ -33,5 +36,46 @@ class StorageMethodes {
       print(res);
     }
     return res;
+  }
+
+  Future<String> userAuth(String email) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+     
+    try {
+      final QuerySnapshot querySnapshot = await firestore
+          .collection("clients")
+          .where("email", isEqualTo: email)
+          .get();
+
+      final List<DocumentSnapshot> clientDocuments = querySnapshot.docs;
+
+      final DocumentSnapshot clientDocument = clientDocuments.first;
+      String name1 = clientDocument["name"];
+
+      if (name1 != "null") {
+        // The user is a client
+
+        
+        return "Client";
+      }
+    } catch (error) {
+      try {
+        final FirebaseFirestore firestore = FirebaseFirestore.instance;
+        final QuerySnapshot querySnapshot = await firestore
+            .collection("cameramans")
+            .where("emailAddress", isEqualTo: email)
+            .get();
+        final List<DocumentSnapshot> documents = querySnapshot.docs;
+
+        if (documents.isNotEmpty) {
+
+          return "Cameraman";
+        }
+      } catch (error) {
+        return "null";
+      }
+    }
+
+    return "null";
   }
 }

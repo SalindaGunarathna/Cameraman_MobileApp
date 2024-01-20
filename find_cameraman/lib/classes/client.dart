@@ -9,6 +9,7 @@ class Client extends User {
   String _budgetRange = "null";
   List<Booking> bookings = [];
   String? profileURL;
+  List<String> following = [];
 
   Client({
     required String name,
@@ -50,6 +51,9 @@ class Client extends User {
     return this._budgetRange;
   }
 
+
+
+
   void newAddress(
     String street,
     String city,
@@ -66,11 +70,12 @@ class Client extends User {
     String status,
     DateTime date,
     String client,
-    String camaraman,
+    String camaraman, 
     Address address,
+     String eventName,
   ) {
     final newBooking = Booking(
-        bookingID, eventDetails, status, date, client, camaraman, address);
+        bookingID, eventDetails, status, date, client, camaraman, address,eventName);
     bookings.add(newBooking);
   }
 
@@ -80,5 +85,9 @@ class Client extends User {
 
   List<Booking> getAllBookings() {
     return List<Booking>.from(bookings);
+  }
+
+  void addFollowing (value){
+    following.add(value);
   }
 }

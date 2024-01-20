@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:find_cameraman/classes/client.dart';
 import 'package:find_cameraman/resources/saveData.dart';
 import 'package:find_cameraman/units/units.dart';
+import 'package:find_cameraman/utils/colors.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 
@@ -15,6 +16,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ClientProfilePage extends StatefulWidget {
+  
+  const ClientProfilePage({Key? key,}) : super(key: key);
+
   @override
   _ClientProfilePageState createState() => _ClientProfilePageState();
 }
@@ -27,10 +31,15 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
 
   Uint8List? _image;
 
+  bool redaOnly = true;
+  bool editing = false;
+
+  bool _isLoadnig = false;
+
   TextEditingController name = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController password = TextEditingController();
-  TextEditingController _budgetRange = TextEditingController();
+  TextEditingController _budgetRange = TextEditingController(text: "null");
   TextEditingController streetController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
@@ -40,11 +49,17 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   QuerySnapshot? querySnapshot;
   DocumentSnapshot? document;
 
-  String Url="https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg";
+  String Url = "null";
 
   User? user;
 
-  late Client client = Client(name: "null", emailAddress: "null",password:  "null", phoneNumber: "null",profileURL:  "null",userID: "null");
+  late Client client = Client(
+      name: "null",
+      emailAddress: "null",
+      password: "null",
+      phoneNumber: "null",
+      profileURL: "null",
+      userID: "null");
 
   final _formKey = GlobalKey<FormState>();
 
@@ -53,18 +68,17 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     super.initState();
     user = auth.currentUser;
     _getClientDetails();
-    print(document);
-    print(user!.email);
   }
 
   Future<void> _getClientDetails() async {
+    setState(() {
+      _isLoadnig = true;
+    });
+
     try {
-      // Replace 'clients' with your Firestore collection name
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("clients")
-          .where("email",
-              isEqualTo:
-                  user!.email) // Replace 'UID' with your actual field name
+          .where("email", isEqualTo: user!.email)
           .get();
 
       List<DocumentSnapshot> documents = querySnapshot.docs;
@@ -78,6 +92,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
           client.emailAddress = document["email"] ?? "null";
           client.password = document["password"] ?? "null";
 
+          // client.setBudget(document["budgetRange"]?? "null");
+
           name.text = client.name;
           phoneNumber.text = client.phoneNumber;
           password.text = client.password;
@@ -85,17 +101,14 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
           // Retrieve and set address data
           Map<String, dynamic>? addressData = document["address"];
 
-
           client.profileURL = document["profileURL"];
 
-
-          if(client.profileURL != null){
+          if (client.profileURL != null) {
             Url = client.profileURL!;
-          }else{
-            Url = 'https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg';
+          } else {
+            Url =
+                'https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg';
           }
-
-
 
           if (addressData != null) {
             client.addAddress(
@@ -111,7 +124,12 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
             stateController.text = client.address!.state;
             postalCodeController.text = client.address!.postalCode;
             countryController.text = client.address!.country;
+            _budgetRange.text = client.getBudget();
           }
+
+          setState(() {
+            _isLoadnig = false;
+          });
         });
       } else {
         print("No documents found for the current user.");
@@ -122,8 +140,9 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   }
 
   Future<void> _updateClientDetails() async {
-    saveProfile();
-  
+    if (_image != null) {
+      saveProfile();
+    }
 
     if (streetController != null) {
       client.addAddress(
@@ -133,6 +152,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
           postalCodeController.text,
           countryController.text);
     }
+
+    client.setBudget(_budgetRange.text);
 
     try {
       if (_formKey.currentState!.validate()) {
@@ -147,15 +168,15 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
             await doc.reference.update({
               "name": client.name,
               "phoneNumber": client.phoneNumber,
-              /*
               "address": {
                 "street": client.address?.street,
                 "city": client.address?.city,
                 "state": client.address?.state,
                 "postalCode": client.address?.postalCode,
                 "country": client.address?.country,
-              },*/
-              "profileURL":  Url,
+              },
+              "profileURL": Url,
+              "budgetRange": client.getBudget()
             });
           });
         });
@@ -181,8 +202,6 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     }
   }
 
-
-
   void selectImage() async {
     Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
@@ -190,45 +209,82 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     });
   }
 
+  void saveProfile() async {
+    if (_image != null) {
+      String? url2 = await StoreData().uploadImageToStorange("", _image!);
 
-void saveProfile() async {
-  if (_image != null) {
-    String? url2 = await StoreData().uploadImageToStorange("", _image!);
-
-    print(url2);
+      print(url2);
       Url = url2;
-  } else {
-    print("Error: Image is null");
+    } else {
+      print("Error: Image is null");
+    }
   }
-}
-  @override
+
+  Column userStatsColoum({required int number, required String lable}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          number.toString(),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+        ),
+        Text(
+          lable,
+          style: const TextStyle(
+              fontSize: 14, fontWeight: FontWeight.w400, color: Colors.grey),
+        ),
+      ],
+    );
+  }
+
+  void writeAcce() {
+    if (user!.email == client.emailAddress) {
+      redaOnly = false;
+    }
+  }
+
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Client Profile')),
-      body: SingleChildScrollView(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Stack(
+    return _isLoadnig
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: mobileBackgroundColor,
+              title: const Text(
+                "Profile",
+                style: TextStyle(
+                    color: mainYellowColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold),
+              ),
+              centerTitle: true,
+            ),
+            body: ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Stack(
                     children: [
                       _image != null
                           ? CircleAvatar(
                               radius: 64,
                               backgroundImage: MemoryImage(_image!),
                             )
-                          : const  CircleAvatar(
+                          : CircleAvatar(
                               radius: 64,
-                              backgroundImage: NetworkImage(
-                                 "https://thumbs.dreamstime.com/b/businessman-icon-vector-male-avatar-profile-image-profile-businessman-icon-vector-male-avatar-profile-image-182095609.jpg" ),
+                              backgroundImage: NetworkImage(Url),
                             ),
                       Positioned(
                         child: IconButton(
                           onPressed: () {
-                           selectImage();
+                            selectImage();
                           },
                           icon: const Icon(Icons.add_a_photo),
                         ),
@@ -237,158 +293,150 @@ void saveProfile() async {
                       )
                     ],
                   ),
-        
-                  
-        
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: name,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.name = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a name';
+                          Expanded(
+                            flex: 1,
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    userStatsColoum(
+                                        number: 5, lable: "Following"),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ), //////
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(top: 15),
+                        child: TextField(
+                          controller: name,
+                          readOnly: redaOnly,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none, // Remove the underline
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.only(top: 10),
+                        child: TextField(
+                          controller: phoneNumber,
+                          readOnly: redaOnly,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 14,
+                              color: secondaryColor),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none, // Remove the underline
+                          ),
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          if (editing) {
+                            // Handle the save button press event
+                            _updateClientDetails();
+                          } else {
+                            // Handle the edit button press event
+                            writeAcce();
+                          }
+                          // Toggle the editing state
+                          setState(() {
+                            editing = !editing;
+                          });
+                        },
+                        icon: Icon(editing
+                            ? Icons.save
+                            : Icons.edit), // Toggle between save and edit icons
+                        label: Text(editing
+                            ? 'Save'
+                            : 'Edit'), // Toggle between save and edit labels
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  color: secondaryColor,
+                ),
+                Text("your Booing"),
+
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('bookings')
+                        .where("clientEmail", isEqualTo: user!.email)
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
                       }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: phoneNumber,
-                    decoration: const InputDecoration(labelText: 'phoneNumber'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.name = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a phoneNumber';
+
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
                       }
-                      return null;
+
+                      final booking = snapshot.data?.docs ?? [];
+
+                      return Column(
+                        children: booking.map((doc) {
+                          Map<String, dynamic>? data =
+                              doc.data() as Map<String, dynamic>?;
+
+                          if (data == null) {
+                            return SizedBox.shrink();
+                          }
+
+                          return BookingCard(data: data);
+                        }).toList(),
+                      );
                     },
                   ),
-                  
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: streetController,
-                    decoration: const InputDecoration(labelText: 'Street'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.address?.street = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a street';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: cityController,
-                    decoration: const InputDecoration(labelText: 'City'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.address?.city = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a city';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: stateController,
-                    decoration: const InputDecoration(labelText: 'State'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.address?.state = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a state';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: postalCodeController,
-                    decoration: const InputDecoration(labelText: 'Postal Code'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.address?.postalCode = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a postal code';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    readOnly: isEditing,
-                    controller: countryController,
-                    decoration: const InputDecoration(labelText: 'Country'),
-                    onChanged: (value) {
-                      setState(() {
-                        client.address?.country = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a country';
-                      }
-                      return null;
-                    },
-                  ),
-                  
-        
-                  Text(client.emailAddress),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        isEditing = !isEditing;
-                      });
-                    },
-                    icon: Icon(Icons.edit), // Add the edit icon
-                    label: const Text('Edit'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isEditing
-                          ? Color.fromARGB(255, 182, 155, 190)
-                          : Colors.grey, // Conditionally change color
-                    ),
-                  ),
-        
-                  ElevatedButton(
-                    onPressed: _updateClientDetails,
-                    child: const Text('Save Changes'),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Your Bookings:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  // ...bookings.map((booking) => ListTile(
-                  //       title: Text(booking.title),
-                  //       subtitle: Text(booking.date),
-                  //     )),
-                ],
-              ),
+              ],
+            ),
+          );
+  }
+}
+
+class BookingCard extends StatelessWidget {
+  final Map<String, dynamic> data;
+
+  const BookingCard({Key? key, required this.data}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'event Name: ${data['eventName']}',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text('Cameraman Name: ${data['cameramanName']}'),
+                Text('booking  ID: ${data['bookingID']}'),
+                Text('date: ${data['data']}'),
+                Text('status: ${data['status']}'),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text(''),
+                ),
+              ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
